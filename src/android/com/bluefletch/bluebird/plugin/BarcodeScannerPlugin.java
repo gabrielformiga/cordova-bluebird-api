@@ -28,6 +28,7 @@ public class BarcodeScannerPlugin extends CordovaPlugin {
     
     private BarcodeScanner scanner;
     protected static String TAG;
+    private AtomicInteger regCount = new AtomicInteger(0);
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView)
@@ -49,9 +50,12 @@ public class BarcodeScannerPlugin extends CordovaPlugin {
                 }
             }); 
             scanner.start();
+            regCount.incrementAndGet();
         }
         else if ("unregister".equals(action)) {
-            scanner.stop();
+            if (regCount.get() > 0 && regCount.decrementAndGet() == 0) {
+                scanner.stop();
+            }
         }
         else if ("softScanOn".equals(action)){
             scanner.softScanOn(new ScanCallback<Boolean>() {
@@ -90,7 +94,9 @@ public class BarcodeScannerPlugin extends CordovaPlugin {
     public void onPause(boolean multitasking)
     {
         super.onPause(multitasking);
-        scanner.stop();
+        if (regCount.get() > 0) {
+            scanner.stop();
+        }
     }
 
 
@@ -101,6 +107,8 @@ public class BarcodeScannerPlugin extends CordovaPlugin {
     public void onResume(boolean multitasking)
     {
         super.onResume(multitasking);
-        scanner.start();
+        if (regCount.get() > 0) {
+            scanner.start();
+        }
     }
 }
