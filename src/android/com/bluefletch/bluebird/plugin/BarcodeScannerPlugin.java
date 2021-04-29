@@ -20,6 +20,8 @@ import org.json.JSONObject;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
 
 import com.bluefletch.bluebird.BarcodeScanner;
 import com.bluefletch.bluebird.ScanCallback;
